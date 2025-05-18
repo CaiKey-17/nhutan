@@ -53,7 +53,7 @@ async def notify_clients(product_id, message_data):
             except Exception as e:
                 print(f"Error sending message to client {client_ws.remote_address} in room {product_id}: {e}")
 
-async def handle_comment_actions(websocket: websockets.WebSocketServerProtocol, path: str):
+async def handle_comment_actions(websocket, path: str):
     print(f"New WebSocket connection from {websocket.remote_address} requesting path: {path}")
     print(f"Headers received: {websocket.request_headers}")
     product_id = None
