@@ -59,7 +59,7 @@ async def handle_comment_actions(websocket, path: str):
     product_id = None
 
     try:
-        # --- CẬP NHẬT XỬ LÝ CORS (Cách 1c) ---
+        # --- CẬP NHẬT XỬ LÝ CORS ---
         origin = websocket.request_headers.get("Origin")
         if origin is not None: # Nếu có header Origin
             # Kiểm tra xem origin có phải là localhost (cho môi trường dev)
@@ -68,8 +68,7 @@ async def handle_comment_actions(websocket, path: str):
             
             # Danh sách các origin được phép cho môi trường production
             allowed_production_origins = [
-                # "https://your-production-app.com", # Bỏ comment và thay thế bằng domain production của bạn
-                # "https://another-trusted-domain.com",
+                "https://nhutan-production.up.railway.app", # Production domain
             ]
 
             if not is_dev_localhost and origin not in allowed_production_origins:
