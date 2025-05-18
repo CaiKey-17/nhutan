@@ -10,8 +10,12 @@ COPY requirements.txt .
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy source code
+# Copy entire source code
 COPY . .
+
+# Copy Firebase Admin SDK JSON into container
+# Giả sử file nằm cùng thư mục Dockerfile ngoài đời thực
+COPY flutterfinal-34766-firebase-adminsdk-fbsvc-390d3ef6d5.json /app/
 
 # Expose WebSocket port
 EXPOSE 8765
