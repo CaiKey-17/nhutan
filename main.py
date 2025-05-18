@@ -61,27 +61,8 @@ async def handle_comment_actions(websocket, path: str):
     try:
         # --- CẬP NHẬT XỬ LÝ CORS ---
         origin = websocket.request_headers.get("Origin")
-        if origin is not None: # Nếu có header Origin
-            # Kiểm tra xem origin có phải là localhost (cho môi trường dev)
-            # bao gồm cả http://localhost:[port] và http://127.0.0.1:[port]
-            is_dev_localhost = origin.startswith("http://localhost:") or origin.startswith("http://127.0.0.1:")
-            
-            # Danh sách các origin được phép cho môi trường production
-            allowed_production_origins = [
-                "https://nhutan-production.up.railway.app", # Production domain
-            ]
-
-            if not is_dev_localhost and origin not in allowed_production_origins:
-                # Nếu không phải localhost dev và cũng không nằm trong danh sách production được phép
-                print(f"Rejected connection from origin: {origin} (not an allowed development or production origin)")
-                await websocket.close(code=1008, reason="Invalid origin")
-                return
-            else:
-                # Nếu là localhost dev hoặc nằm trong danh sách production được phép
-                print(f"Accepted connection from origin: {origin}")
-        else:
-            # Cho phép kết nối nếu không có Origin header (ví dụ từ client mobile native, Postman)
-            print(f"Accepted connection with no Origin header (e.g., native mobile client or tool).")
+        print(f"Accepted connection from origin: {origin or 'no Origin header'}")
+        # No origin restriction; all origins are allowed
         # --- KẾT THÚC CẬP NHẬT XỬ LÝ CORS ---
 
         path_parts = path.strip("/").split("/")
