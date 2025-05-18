@@ -39,7 +39,7 @@ except Exception as e:
 # --- End Firebase Admin SDK Setup ---
 
 product_rooms = {}
-PORT = int(os.getenv("PORT", 8765))  # Sử dụng cổng động từ biến môi trường
+PORT = int(os.getenv("PORT", 8080))  # Sử dụng cổng động từ biến môi trường
 
 # Phần còn lại của mã giữ nguyên
 async def notify_clients(product_id, message_data):
