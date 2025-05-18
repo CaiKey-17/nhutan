@@ -1,5 +1,6 @@
 import asyncio
 import json
+import os
 import websockets
 from websockets.exceptions import ConnectionClosed, ConnectionClosedOK, ConnectionClosedError
 import firebase_admin
@@ -13,7 +14,6 @@ print(f"websockets version being used: {websockets.__version__}")
 
 # Kiểm tra phiên bản websockets
 try:
-    # Phiên bản tối thiểu là 10.0 để hỗ trợ signature (websocket, path)
     if not hasattr(websockets, '__version__') or websockets.__version__ < "10.0":
         raise ImportError(f"websockets version {getattr(websockets, '__version__', 'unknown')} is too old. Please upgrade to 10.0 or later (12.0 recommended).")
     print(f"Confirmed websockets version {websockets.__version__} is suitable.")
@@ -23,7 +23,12 @@ except ImportError as e:
 
 # --- Firebase Admin SDK Setup ---
 try:
-    cred = credentials.Certificate('flutterfinal-34766-firebase-adminsdk-fbsvc-390d3ef6d5.json') # Đảm bảo file này tồn tại
+    firebase_creds_json = os.getenv("FIREBASE_CREDENTIALS")
+    if not firebase_creds_json:
+        print("Error: FIREBASE_CREDENTIALS environment variable not set.")
+        exit()
+    cred_dict = json.loads(firebase_creds_json)
+    cred = credentials.Certificate(cred_dict)
     if not firebase_admin._apps:
         firebase_admin.initialize_app(cred)
     db = firestore.client()
@@ -34,8 +39,9 @@ except Exception as e:
 # --- End Firebase Admin SDK Setup ---
 
 product_rooms = {}
-PORT = 8765
+PORT = int(os.getenv("PORT", 8765))  # Sử dụng cổng động từ biến môi trường
 
+# Phần còn lại của mã giữ nguyên
 async def notify_clients(product_id, message_data):
     if product_id in product_rooms:
         message_str = json.dumps(message_data, ensure_ascii=False, default=str)
@@ -59,11 +65,8 @@ async def handle_comment_actions(websocket, path: str):
     product_id = None
 
     try:
-        # --- CẬP NHẬT XỬ LÝ CORS ---
         origin = websocket.request_headers.get("Origin")
         print(f"Accepted connection from origin: {origin or 'no Origin header'}")
-        # No origin restriction; all origins are allowed
-        # --- KẾT THÚC CẬP NHẬT XỬ LÝ CORS ---
 
         path_parts = path.strip("/").split("/")
         print(f"Parsed path parts: {path_parts}")
